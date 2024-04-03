@@ -1,5 +1,5 @@
 {
-  "name": "prismarine-template",
+  "name": "minecraft-java-decomp",
   "version": "1.0.0",
   "description": "A template repository to make it easy to create new prismarine repo",
   "main": "src/index.js",
@@ -11,17 +11,17 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/extremeheat/prismarine-template.git"
+    "url": "git+https://github.com/extremeheat/minecraft-java-decomp.git"
   },
   "keywords": [],
   "author": "extremeheat",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/extremeheat/prismarine-template/issues"
+    "url": "https://github.com/extremeheat/minecraft-java-decomp/issues"
   },
-  "homepage": "https://github.com/extremeheat/prismarine-template#readme",
+  "homepage": "https://github.com/extremeheat/minecraft-java-decomp#readme",
   "devDependencies": {
-    "prismarine-template": "file:.",
+    "minecraft-java-decomp": "file:.",
     "standard": "^17.0.0",
     "mocha": "^10.0.0"
   }

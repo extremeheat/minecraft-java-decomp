@@ -1,5 +1,5 @@
 /* eslint-env mocha */
-const lib = require('prismarine-template')
+const lib = require('minecraft-java-decomp')
 
 describe('basic', () => {
   it('test', () => {
