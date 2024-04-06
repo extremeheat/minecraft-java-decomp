@@ -6,8 +6,9 @@ const assert = require('assert')
 
 describe('decompile api works', () => {
   it('on client', async () => {
-    await lib.decompile('1.20.4')
-    const srcDir = join(__dirname, '../versions/1.20.4/client/version.json')
+    const version = '1.20.3'
+    await lib.decompile(version)
+    const srcDir = join(__dirname, '../versions/', version, '/client/version.json')
     assert(fs.existsSync(srcDir))
   })
 

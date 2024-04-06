@@ -17,6 +17,7 @@ async function getLatestManifest () {
 }
 
 async function updateDeps () {
+  fs.mkdirSync(join(__dirname, '../tools/'), { recursive: true })
   const specialSource = await fetch('https://repo1.maven.org/maven2/net/md-5/SpecialSource/maven-metadata.xml').then(res => res.text())
   const specialSourceLatestVersion = specialSource.match(/<latest>(.*?)<\/latest>/)[1]
   const specialSourceJarPath = join(__dirname, '../tools/SpecialSource-' + specialSourceLatestVersion + '.jar')
@@ -94,8 +95,8 @@ async function decompile (version, options = {}) {
     const sideJarURL = versionManifest.downloads[side].url
     const sideMappingsURL = versionManifest.downloads[side + '_mappings'].url
     // Download and save the [client|server].jar and [client|server]_mappings.txt to the path folder
-    if (!fs.existsSync(jarPath)) exec(`curl -o ${jarPath} ${sideJarURL}`)
-    if (!fs.existsSync(mappingsPath)) exec(`curl -o ${mappingsPath} ${sideMappingsURL}`)
+    if (!fs.existsSync(jarPath)) exec(`curl -L -o ${jarPath} ${sideJarURL}`)
+    if (!fs.existsSync(mappingsPath)) exec(`curl -L -o ${mappingsPath} ${sideMappingsURL}`)
     // Now remap the [client|server].jar to [client|server]-remapped.jar
     const remapped = await remap(fs.readFileSync(mappingsPath, 'utf-8'))
 
