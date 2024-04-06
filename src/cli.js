@@ -18,7 +18,7 @@ const opt = require('basic-args')({
   examples: [
     'minecraft-java-decomp --version latest         Decompile latest version',
     'minecraft-java-decomp --versions               List all available versions',
-    'minecraft-java-decomp -v 12w16a --side server  Download and decompile server version 12w16a',
+    'minecraft-java-decomp -v 12w16a --side server  Download and decompile server version 12w16a'
   ],
   preprocess (options) {
     if (options.versions || options.clean) {
