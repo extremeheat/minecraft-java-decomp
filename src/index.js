@@ -55,7 +55,8 @@ async function decompile (version, options = {}) {
       console.log('Force option enabled, erasing existing version folder:', outDir)
       fs.rmSync(outDir, { recursive: true })
     } else if (fs.readdirSync(outDir).length) {
-      throw new Error('Version folder already exists. Please erase the folder or use the force option: ' + path)
+      console.warn('Version folder already exists. Please erase the folder or use the force option: ' + path)
+      return outDir
     }
   }
   if (!fs.existsSync(path)) {
@@ -123,7 +124,7 @@ async function decompile (version, options = {}) {
   }
 
   async function decFernFlower (remappedJarPath, extraOptions = []) {
-    const decompiledPath = join(path, side)
+    const decompiledPath = outDir
     fs.mkdirSync(decompiledPath, { recursive: true })
     execFile('java', [
       '-jar', fernflowerJar,

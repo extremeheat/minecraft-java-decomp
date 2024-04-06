@@ -1,6 +1,11 @@
 module "minecraft-java-decomp" {
+  // Decompile a Minecraft server or client jar. Returns the path to the decompiled source.
   function decompile (version: string, options: {
     side?: 'client' | 'server',
+    // Path to where the decompiled source should be saved, defaults to a internal directory
+    path?: string,
+    // If force is specified, erase any existing decompiled source in the path before decompiling
+    force?: boolean,
     // Custom path to SpecialSource jar
     specialSourceJar?: string,
     // Custom path to Fernflower jar
@@ -10,5 +15,5 @@ module "minecraft-java-decomp" {
       name: 'fernflower',
       options: object
     }
-  })
+  }): Promise<string>
 }
