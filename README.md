@@ -21,17 +21,16 @@ npx minecraft-java-decomp --help
 minecraft-java-decomp - v1.0.0
 Minecraft Java Edition decompiler and deobfuscator
 Options:
-  --version, -v Version to download. For latest release, try "release" or "snapshot" for latest snapshot
+  --version, -v Version to decompile. For latest release, try "release" or "snapshot" for latest snapshot
   --side        "server" or "client"  (default: client)
   --path        Path to save the decompiled files. Defaults to an internal folder for this package.
-  --force       Force download even if the version folder already exists
+  --force       Force fresh download and decompile even if the version folder already exists
   --versions    Passing --versions will list all versions
   --clean       Clear the internal version cache (where versions are decompiled to if you did not specify a decompiler output path). No other actions will be taken.
-
 Usage:
-  minecraft-java-decomp --version latest      Start a server on the latest version
-  minecraft-java-decomp --versions            List all avaliable versions
-  minecraft-java-decomp -v 1.20.0 --download  Download v1.20
+  minecraft-java-decomp --version latest         Decompile latest version
+  minecraft-java-decomp --versions               List all available versions
+  minecraft-java-decomp -v 12w16a --side server  Download and decompile server version 12w16a
 ```
 
 ## Usage (API)

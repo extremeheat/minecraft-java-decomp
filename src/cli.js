@@ -6,19 +6,19 @@ const opt = require('basic-args')({
   description: 'Minecraft Java Edition decompiler and deobfuscator',
   version,
   options: {
-    version: { type: String, description: 'Version to download. For latest release, try "release" or "snapshot" for latest snapshot', alias: 'v' },
+    version: { type: String, description: 'Version to decompile. For latest release, try "release" or "snapshot" for latest snapshot', alias: 'v' },
     side: { type: String, description: '"server" or "client"', default: 'client' },
     path: { type: String, description: 'Path to save the decompiled files. Defaults to an internal folder for this package.', default: null },
 
-    force: { type: Boolean, description: 'Force download even if the version folder already exists' },
+    force: { type: Boolean, description: 'Force fresh download and decompile even if the version folder already exists' },
 
     versions: { type: Boolean, description: 'Passing --versions will list all versions' },
     clean: { type: Boolean, description: 'Clear the internal version cache (where versions are decompiled to if you did not specify a decompiler output path). No other actions will be taken.' }
   },
   examples: [
-    'minecraft-java-decomp --version latest      Start a server on the latest version',
-    'minecraft-java-decomp --versions            List all avaliable versions',
-    'minecraft-java-decomp -v 1.20.0 --download  Download v1.20'
+    'minecraft-java-decomp --version latest         Decompile latest version',
+    'minecraft-java-decomp --versions               List all available versions',
+    'minecraft-java-decomp -v 12w16a --side server  Download and decompile server version 12w16a',
   ],
   preprocess (options) {
     if (options.versions || options.clean) {
