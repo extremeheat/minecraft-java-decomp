@@ -14,6 +14,8 @@ module "minecraft-java-decomp" {
     decompiler?: {
       name: 'fernflower',
       options: object
-    }
+    },
+    // Write less things to stdout. Note there will still be output when downloading remote files, on first decompile run.
+    quiet?: boolean
   }): Promise<string>
 }

@@ -46,16 +46,17 @@ function clearInternalCache () {
 }
 
 async function decompile (version, options = {}) {
+  const debug = options.quiet ? () => {} : console.debug
   const side = options.side || 'client'
   const path = options.path || join(__dirname, '../versions/' + version + '/')
   const outDir = join(path, side)
-  console.log('Decompiling', version, 'to', outDir)
+  debug('Decompiling', version, 'to', outDir)
   if (fs.existsSync(outDir)) {
     if (options.force) {
-      console.log('Force option enabled, erasing existing version folder:', outDir)
+      debug('Force option enabled, erasing existing version folder:', outDir)
       fs.rmSync(outDir, { recursive: true })
     } else if (fs.readdirSync(outDir).length) {
-      console.warn('Version folder already exists. Please erase the folder or use the force option: ' + path)
+      debug('Version folder already exists. Please erase the folder or use the force option: ' + path)
       return outDir
     }
   }
