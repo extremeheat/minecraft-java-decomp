@@ -1,6 +1,6 @@
 {
   "name": "minecraft-java-decomp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Lib and CLI tool to decompile and deobfuscate Minecraft Java Edition",
   "main": "src/index.js",
   "bin": {
