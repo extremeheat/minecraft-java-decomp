@@ -1,5 +1,5 @@
 const fs = require('fs')
-const { join } = require('path')
+const { join, resolve } = require('path')
 const cp = require('child_process')
 const { convertMappingsMojang2TSRG } = require('./util')
 function exec (cmd) {
@@ -75,7 +75,7 @@ async function decompile (version, options = {}) {
 
   const debug = options.quiet ? () => {} : console.debug
   const side = options.side || 'client'
-  const path = options.path || join(__dirname, '../versions/' + version + '/')
+  const path = options.path ? resolve(options.path) : join(__dirname, '../versions/' + version + '/')
   const outDir = join(path, side)
   debug('Decompiling', version, 'to', outDir)
   if (fs.existsSync(outDir)) {
@@ -167,6 +167,12 @@ async function decompile (version, options = {}) {
       remappedJarPath,
       decompiledPath
     ])
+    const outData = fs.readdirSync(decompiledPath)
+    if (outData.length === 1) {
+      console.log('Unzipping:', outData[0])
+      // unzip with jar
+      execFile('jar', ['xf', join(decompiledPath, outData[0]), '-C', decompiledPath])
+    }
     console.log('Done decompiling to:', decompiledPath)
     return decompiledPath
   }
