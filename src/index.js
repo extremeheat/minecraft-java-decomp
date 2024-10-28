@@ -170,8 +170,8 @@ async function decompile (version, options = {}) {
     const outData = fs.readdirSync(decompiledPath)
     if (outData.length === 1) {
       console.log('Unzipping:', outData[0])
-      // unzip with jar
-      execFile('jar', ['xf', join(decompiledPath, outData[0]), '-C', decompiledPath])
+      // unzip with jar, use just jar xf jarPath with cp path set to decompiledPath
+      cp.execSync('jar', ['xf', jarPath], { cwd: decompiledPath })
     }
     console.log('Done decompiling to:', decompiledPath)
     return decompiledPath
