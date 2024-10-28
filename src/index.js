@@ -26,16 +26,36 @@ async function updateDeps () {
     exec(`curl -L -o ${specialSourceJarPath} ${specialSourceJarURL}`)
   }
 
-  const vineFlower = await fetch('https://api.github.com/repos/Vineflower/vineflower/releases/latest').then(res => res.json())
-  const vineFlowerLatestVersion = vineFlower.tag_name
-  const vineFlowerJarPath = join(__dirname, '../tools/vineflower-' + vineFlowerLatestVersion + '.jar')
-  if (!fs.existsSync(vineFlowerJarPath)) {
-    const vineFlowerJarURL = vineFlower.assets.find(a => a.name.endsWith('.jar') && !a.name.includes('slim')).browser_download_url
-    console.log('VineFlower:', vineFlowerJarURL)
-    exec(`curl -L -o ${vineFlowerJarPath} ${vineFlowerJarURL}`, { stdio: 'inherit' })
+  let decompilerJarPath
+
+  async function loadVineflower() { // eslint-disable-line
+    const vineFlower = await fetch('https://api.github.com/repos/Vineflower/vineflower/releases/latest').then(res => res.json())
+    const vineFlowerLatestVersion = vineFlower.tag_name
+    const vineFlowerJarPath = join(__dirname, '../tools/vineflower-' + vineFlowerLatestVersion + '.jar')
+    if (!fs.existsSync(vineFlowerJarPath)) {
+      const vineFlowerJarURL = vineFlower.assets.find(a => a.name.endsWith('.jar') && !a.name.includes('slim')).browser_download_url
+      console.log('VineFlower:', vineFlowerJarURL)
+      exec(`curl -L -o ${vineFlowerJarPath} ${vineFlowerJarURL}`, { stdio: 'inherit' })
+    }
+    decompilerJarPath = vineFlowerJarPath
   }
 
-  return { specialSourceJarPath, vineFlowerJarPath }
+  async function loadFernFlower () {
+    const manifest = await fetch('https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/maven-metadata.xml').then(res => res.text())
+    const ffLatestVersion = manifest.match(/<latest>(.*?)<\/latest>/)[1]
+    const fernFlowerJarPath = join(__dirname, '../tools/fernflower-' + ffLatestVersion + '.jar')
+    if (!fs.existsSync(fernFlowerJarPath)) {
+      // https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/242.22855.74/java-decompiler-engine-242.22855.74.jar
+      const fernFlowerJarURL = `https://www.jetbrains.com/intellij-repository/releases/com/jetbrains/intellij/java/java-decompiler-engine/${ffLatestVersion}/java-decompiler-engine-${ffLatestVersion}.jar`
+      console.log('FernFlower:', fernFlowerJarURL)
+      exec(`curl -L -o ${fernFlowerJarPath} ${fernFlowerJarURL}`, { stdio: 'inherit' })
+    }
+    decompilerJarPath = fernFlowerJarPath
+  }
+
+  await loadFernFlower()
+
+  return { specialSourceJarPath, decompilerJarPath }
 }
 
 function clearInternalCache () {
@@ -46,6 +66,13 @@ function clearInternalCache () {
 }
 
 async function decompile (version, options = {}) {
+  const manifest = await getLatestManifest()
+
+  // allow 'version' to be a version id or 'release' or 'snapshot'
+  if (['release', 'snapshot'].includes(version)) {
+    version = manifest.latest[version]
+  }
+
   const debug = options.quiet ? () => {} : console.debug
   const side = options.side || 'client'
   const path = options.path || join(__dirname, '../versions/' + version + '/')
@@ -69,9 +96,9 @@ async function decompile (version, options = {}) {
   let fernflowerJar = options.fernflowerJar
   const decompiler = options.decompiler || { type: 'fernflower', options: [] }
   try {
-    const { specialSourceJarPath, vineFlowerJarPath } = await updateDeps()
+    const { specialSourceJarPath, decompilerJarPath } = await updateDeps()
     specialSourceJar ||= specialSourceJarPath
-    fernflowerJar ||= vineFlowerJarPath
+    fernflowerJar ||= decompilerJarPath
   } catch (e) {
     console.error('Failed to update dependencies:', e)
   }
@@ -79,7 +106,6 @@ async function decompile (version, options = {}) {
     throw new Error('Failed to find remapper or decompiler jars')
   }
 
-  const manifest = await getLatestManifest()
   // console.log(manifest)
   const versionData = manifest.versions.find(v => v.id === version)
   if (!versionData) {
@@ -128,19 +154,20 @@ async function decompile (version, options = {}) {
     const decompiledPath = outDir
     fs.mkdirSync(decompiledPath, { recursive: true })
     execFile('java', [
-      '-jar', fernflowerJar,
       '-Xmx4G',
       '-Xms2G',
+      '-jar', fernflowerJar,
       '-hes=0', // hide empty super invocation deactivated (might clutter but allow following)
       '-hdc=0', // hide empty default constructor deactivated (allow to track)
       '-dgs=1', // decompile generic signatures activated (make sure we can follow types)
       '-lit=1', // output numeric literals
       '-asc=1', // encode non-ASCII characters in string and character
-      '-log=WARN',
+      '-log=ERROR',
       ...extraOptions,
       remappedJarPath,
       decompiledPath
     ])
+    console.log('Done decompiling to:', decompiledPath)
     return decompiledPath
   }
 }
