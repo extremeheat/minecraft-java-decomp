@@ -19,4 +19,3 @@ describe('decompile api works', () => {
     assert(fs.existsSync(srcDir))
   }).timeout(1000 * 60 * 10)
 })
-
