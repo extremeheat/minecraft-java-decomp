@@ -1,3 +1,6 @@
+## 1.1.1
+* [Support unobfuscated jars (#9)](https://github.com/extremeheat/minecraft-java-decomp/commit/9bb96432af5a703cf5694832e2d670df6903d90a) (thanks @extremeheat)
+
 ## 1.1.0
 * [Use IntelliJ decompiler (#4)](https://github.com/extremeheat/minecraft-java-decomp/commit/bb4bb961655f398e41c95b47ae6263f2dfdcae14) (thanks @extremeheat)
 
