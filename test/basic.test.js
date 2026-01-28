@@ -13,7 +13,7 @@ describe('decompile api works', () => {
   }).timeout(1000 * 60 * 10)
 
   it('on server', async function () {
-    const version = '24w14a'
+    const version = '26.1-snapshot-5' // '24w14a'
     await lib.decompile(version, { side: 'server' })
     const srcDir = join(__dirname, '../versions/', version, '/server/version.json')
     assert(fs.existsSync(srcDir))

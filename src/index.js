@@ -121,13 +121,18 @@ async function decompile (version, options = {}) {
 
   async function work () {
     const sideJarURL = versionManifest.downloads[side].url
-    const sideMappingsURL = versionManifest.downloads[side + '_mappings'].url
-    // Download and save the [client|server].jar and [client|server]_mappings.txt to the path folder
+    const sideMappingsURL = versionManifest.downloads[side + '_mappings']?.url
+    // Download and save the [client|server].jar and optionally, [client|server]_mappings.txt to the path folder
     if (!fs.existsSync(jarPath)) exec(`curl -L -o ${jarPath} ${sideJarURL}`)
-    if (!fs.existsSync(mappingsPath)) exec(`curl -L -o ${mappingsPath} ${sideMappingsURL}`)
-    // Now remap the [client|server].jar to [client|server]-remapped.jar
-    const remapped = await remap(fs.readFileSync(mappingsPath, 'utf-8'))
-
+    let remapped
+    if (sideMappingsURL) {
+      if (!fs.existsSync(mappingsPath)) exec(`curl -L -o ${mappingsPath} ${sideMappingsURL}`)
+      // Now remap the [client|server].jar to [client|server]-remapped.jar
+      remapped = await remap(fs.readFileSync(mappingsPath, 'utf-8'))
+    } else {
+      // Jar is already remaped
+      remapped = jarPath
+    }
     if (decompiler.type === 'fernflower') {
       return await decFernFlower(remapped, decompiler.options)
     } else {
