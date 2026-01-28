@@ -126,7 +126,7 @@ async function decompile (version, options = {}) {
     if (!fs.existsSync(jarPath)) exec(`curl -L -o ${jarPath} ${sideJarURL}`)
     let remapped
     if (sideMappingsURL) {
-      if (!fs.existsSync(mappingsPath)) exec(`curl -L -o ${mappingsPath} ${sideMappingsURL}`))
+      if (!fs.existsSync(mappingsPath)) exec(`curl -L -o ${mappingsPath} ${sideMappingsURL}`)
       // Now remap the [client|server].jar to [client|server]-remapped.jar
       remapped = await remap(fs.readFileSync(mappingsPath, 'utf-8'))
     } else {
